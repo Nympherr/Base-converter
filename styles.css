@@ -1,0 +1,43 @@
+html, body {
+    text-align: center;
+}
+#title {
+    font-size: 50px;
+    font-family: 'Courier New', monospace;
+}
+p {    
+    font-size: 25px;
+    font-family: 'Courier New', monospace; 
+}
+#input {
+    height: 55px;
+    width: 225px;
+    font-size: 20px;
+    padding: 15px;
+    border-radius: 10px;
+}
+#base_from,#base_to {
+    height: 40px;
+    width: 165px;
+    padding: 5px;
+    font-size: 20px;
+    border-radius: 5px;
+}
+div {
+    margin: 20px;
+}
+#convert,#reset {
+    padding: 5px 25px;
+    font-size: 25px;
+    border-radius: 8px;
+}
+#result {
+    font-size: 35px;
+}
+#output {
+    height: 80px;
+    width: 280px;
+    font-size: 20px;
+    padding: 15px;
+    border-radius: 10px;
+}
