@@ -5,6 +5,7 @@ let reset = document.querySelector("#reset");
 let base_from = document.querySelector("#base_from");
 let base_to = document.querySelector("#base_to");
 
+
 reset.addEventListener("click", function(){
     input.value = "";
     output.value = "";
@@ -18,8 +19,8 @@ convert.addEventListener("click",function() {
 
     if(!isNaN(input_value)){
 
-        let integerPart = Math.floor(input_value);
-        let floatPart = (input_value % 1).toFixed(10);
+        let integerPart = bigDecimal.floor(input_value);
+        let floatPart =  bigDecimal.subtract(input_value,integerPart);
 
         if(floatPart == 0){
             let sum = getBase10(input_value,base_from.value);
@@ -31,7 +32,7 @@ convert.addEventListener("click",function() {
             floatPart = convertFromBase10Fractional(floatPart,base_to.value);
             let sum = getBase10(integerPart,base_from.value);
             let finalResult = convertFromBase10(sum, base_to.value);
-            finalResult = finalResult + floatPart;
+            finalResult = bigDecimal.add(finalResult, floatPart);
             output.value = finalResult;
         }
     }
@@ -88,19 +89,20 @@ function getBase10Fractional(number,base_from){
 
 function convertFromBase10Fractional(number,base_to){
 
-    let value = parseFloat(base_to);
+    let value = parseFloat(base_to)
     let result = "";
     let remainder = number;
     let calculation;
     let integerPart;
+    let maxIterations = 17;
     do{
-        calculation = (remainder * value);
-        integerPart = Math.floor(calculation);
+        calculation = bigDecimal.multiply(remainder, value);
+        integerPart = bigDecimal.floor(calculation);
         result += integerPart.toString();
-        remainder = (calculation - integerPart);
-    }while(remainder != 0);
+        remainder = bigDecimal.subtract(calculation, integerPart);
+        maxIterations--;
+    }while(remainder != 0 && maxIterations > 0);
 
-    result = result.split("").reverse().join("");
     result = "0." + result;
     result = parseFloat(result);
     return result;
