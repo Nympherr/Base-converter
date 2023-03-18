@@ -1,9 +1,18 @@
+
+
 let input = document.querySelector("#input");
 let convert = document.querySelector("#convert");
 let output = document.querySelector("#output");
 let reset = document.querySelector("#reset");
 let base_from = document.querySelector("#base_from");
 let base_to = document.querySelector("#base_to");
+
+const letterValues = {
+    'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15, 'G': 16, 'H': 17,
+    'I': 18, 'J': 19, 'K': 20, 'L': 21, 'M': 22, 'N': 23, 'O': 24, 'P': 25,
+    'Q': 26, 'R': 27, 'S': 28, 'T': 29, 'U': 30, 'V': 31, 'W': 32, 'X': 33,
+    'Y': 34,'Z': 35
+  };
 
 
 reset.addEventListener("click", function(){
@@ -14,6 +23,11 @@ reset.addEventListener("click", function(){
 });
 
 convert.addEventListener("click",function() {
+
+    if(parseInt(base_from.value) > 10){
+        input.value = input.value.toUpperCase();
+        letterConverter();
+    }
 
     let input_value = parseFloat(input.value);
 
@@ -40,6 +54,26 @@ convert.addEventListener("click",function() {
         output.value = "Only numbers are allowed!"
     }
 });
+
+function letterConverter(){
+    let container = input.value.split("");
+    let sum = 0;
+    for(let i = 0; i < container.length;i++){
+        if (/[A-Z]/.test(container[i])) {
+            container[i] = letterValues[container[i]];
+        }
+    }
+    
+    let index = 0;
+    for(let j = container.length - 1; j >= 0; j--){
+        if(container[j] != "."){
+            sum += Number(container[j]) * Math.pow(parseInt(base_from.value), index);
+            index++;
+        }
+    }
+    console.log(sum);
+
+}
 
 function getBase10(number,base_from){
 
