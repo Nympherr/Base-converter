@@ -36,87 +36,119 @@ reset.addEventListener("click", function(){
 
 convert.addEventListener("click",function() {
 
+    //Checks if input has any symbols besides numbers
+
     let input_value;
-
-    // KOLKAS SU RAIDEM GERAI VARO. Konvertuoja i base 10 ( nuo 36)
-
     if(pattern.test(input.value)){
         lettersInvolved = true;
         input.value = input.value.toUpperCase();
-        let test = convertFromLetters();
-        input_value = test;
-        console.log(input_value);
+        input_value = convertFromLetters();
     }
     else{
         input_value = parseFloat(input.value);
     }
+
+    // checks if input was valid
 
     if(!isNaN(input_value)){
 
         let integerPart = bigDecimal.floor(input_value);
         let floatPart =  bigDecimal.subtract(input_value,integerPart);
 
+        // When input does not contain any letters/characters
+
         if(lettersInvolved == false){
 
-            let checkValidity = input_value.toString().replace(/\./g, "").split("").map(Number);
-            let checkValidity2 = input_value.toString().replace(/\./g, "");
-            console.log(checkValidity2 + " hey");
+            // Checks if input's base is higher than the one selected
 
+            let checkValidity = input_value.toString().replace(/\./g, "").split("").map(Number);
             for(let l = 0; l < checkValidity.length;l++){
                 if(checkValidity[l] > base_from.value){
                     output.value = "Select higher base!";
                     return ;
                 }
             }
-            if(floatPart == 0){
-                if(base_to.value > 10){
-                    let sum = getBase10(integerPart,base_from.value);
-                    let finalResult = convertUpTo36(sum, base_to.value); 
-                    output.value = finalResult;
 
-                }
-                else{
-                    let sum = getBase10(integerPart,base_from.value);
-                    let finalResult = convertFromBase10(sum, base_to.value); 
-                    output.value = finalResult;
-                }
-            }
-            else{
-                floatPart = getBase10Fractional(floatPart,base_from.value);
-                floatPart = convertFromBase10Fractional(floatPart,base_to.value);
+            // Checks if input is a float number
+
+            if(floatPart == 0){
                 let sum = getBase10(integerPart,base_from.value);
-                let finalResult = convertFromBase10(sum, base_to.value);
-                finalResult = bigDecimal.add(finalResult, floatPart);
+                let finalResult = convertUpTo36(sum, base_to.value); 
                 output.value = finalResult;
             }
-        }
-        else{
 
-            if(floatPart == 0){
+            // Input is a float number
+
+            else{
+
+                // Converts to a base larger than 10 (with letters instead of numbers)
 
                 if(base_to.value > 10){
+                    floatPart = getBase10Fractional(floatPart,base_from.value);
+                    floatPart = convertUpTo36Fractional(floatPart,base_to.value);
+                    let sum = getBase10(integerPart,base_from.value);
+                    let finalResult = convertUpTo36(sum, base_to.value); 
+                    finalResult = finalResult + "." + floatPart;
+                    output.value = finalResult;
+                }
+
+                // Converts to a 2-10 base where only numbers are allowed
+
+                else{
+                    floatPart = getBase10Fractional(floatPart,base_from.value);
+                    floatPart = convertFromBase10Fractional(floatPart,base_to.value);
+                    let sum = getBase10(integerPart,base_from.value);
+                    let finalResult = convertFromBase10(sum, base_to.value);
+                    finalResult = bigDecimal.add(finalResult, floatPart);
+                    output.value = finalResult;
+                }
+            }
+        }
+
+        // If input contained letters (f.e. AAA.C153)
+
+        else{
+
+            // Input is not a floating number
+
+            if(floatPart == 0){
                     let finalResult = convertUpTo36(integerPart,base_to.value);
                     output.value = finalResult;
                     lettersInvolved = false;
+            }
+
+            // Input is a floating number
+
+            else{
+
+                // Checks if user wants to convert to a base larger than 10
+
+                if(base_to.value > 10){
+                    floatPart = convertUpTo36Fractional(floatPart,base_to.value);
+                    let finalResult = convertUpTo36(integerPart,base_to.value);
+                    finalResult = finalResult + "." + floatPart;
+                    output.value = finalResult;
+                    lettersInvolved = false;
+
                 }
+
+                // Convert to a 2-10 base
+
                 else{
+                    floatPart = convertFromBase10Fractional(floatPart,base_to.value);
                     let finalResult = convertFromBase10(integerPart, base_to.value);
+                    finalResult = bigDecimal.add(finalResult, floatPart);
                     output.value = finalResult;
                     lettersInvolved = false;
                 }
             }
-            else{
-                floatPart = convertFromBase10Fractional(floatPart,base_to.value);
-                let finalResult = convertFromBase10(integerPart, base_to.value);
-                finalResult = bigDecimal.add(finalResult, floatPart);
-                output.value = finalResult;
-                lettersInvolved = false;
-            }
-
         }
     }
+
+    // If input was not valid
+
     else{
-        output.value = "Only numbers are allowed!"
+        output.value = "Error!"
     }
 });
 
@@ -143,6 +175,8 @@ function convertLetterWithFloat(){
     let sumInteger = 0;
     let sumFloat = 0;
 
+    // Converts numbers to corresponding ASCII values
+
     for(let i = 0; i < integerPart.length;i++){
         if (/[A-Z]/.test(integerPart[i])) {
             integerPart[i] = letterValues[integerPart[i]];
@@ -155,28 +189,30 @@ function convertLetterWithFloat(){
         }
     }
 
+    // Checks if input's base is larger than the one user selected
+
     for(let d = 0; d < integerPart.length; d++){
         if(Number(integerPart[d]) >= parseInt(base_from.value)){
-            output.value = "Incorrect parameters!";
             return;
         }
     }
     for(let c = 0; c < floatPart.length; c++){
         if(Number(floatPart[c]) >= parseInt(base_from.value)){
-            output.value = "Incorrect parameters!";
             return;
         }
     }
+
+    // Adds integer and float numbers respectively
 
     let indexInteger = 0;
     let indexFloat = -1;
 
     for(let j = integerPart.length - 1; j >= 0; j--){
-        sumInteger += Number(integerPart[j]) * Math.pow(parseInt(base_from.value), indexInteger);
+        sumInteger += parseInt(bigDecimal.multiply(Number(integerPart[j]),Math.pow(parseInt(base_from.value), indexInteger)));
             indexInteger++;
     }
     for(let x = 0; x < floatPart.length; x++){
-        sumFloat += Number(floatPart[x]) * Math.pow(parseInt(base_from.value), indexFloat);
+        sumFloat += parseFloat(bigDecimal.multiply(Number(floatPart[x]), Math.pow(parseInt(base_from.value), indexFloat)));
             indexFloat--;
     }
 
@@ -197,7 +233,7 @@ function convertLetterWithoutFloat(){
     }
     for(let g = 0; g < container.length; g++){
         if(Number(container[g]) >= parseInt(base_from.value)){
-            output.value = "Incorrect parameters!";
+
             return;
         }
     }
@@ -298,5 +334,30 @@ function convertUpTo36(number,base_to){
     } while (quotient != 0);
 
     result = result.split("").reverse().join("");
+    return result;
+};
+
+function convertUpTo36Fractional(number,base_to){
+
+    let value = parseFloat(base_to)
+    let result = "";
+    let remainder = number;
+    let calculation;
+    let integerPart;
+    let maxIterations = 17;
+    do{
+        calculation = bigDecimal.multiply(remainder, value);
+        integerPart = bigDecimal.floor(calculation);
+        if(integerPart > 9){
+            result += letterValues2[integerPart].toString();
+        }
+        else{
+            result += integerPart.toString();
+        }
+
+        remainder = bigDecimal.subtract(calculation, integerPart);
+        maxIterations--;
+    }while(remainder != 0 && maxIterations > 0);
+
     return result;
 };
