@@ -15,6 +15,14 @@ const letterValues = {
     'Y': 34,'Z': 35
   };
 
+const letterValues2 = {
+    10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F',
+    16: 'G', 17: 'H', 18: 'I', 19: 'J', 20: 'K', 21: 'L',
+    22: 'M', 23: 'N', 24: 'O', 25: 'P', 26: 'Q', 27: 'R',
+    28: 'S', 29: 'T', 30: 'U', 31: 'V', 32: 'W', 33: 'X',
+    34: 'Y', 35: 'Z'
+  };
+
 const pattern = /[a-zA-Z]/;
 
 
@@ -61,9 +69,17 @@ convert.addEventListener("click",function() {
                 }
             }
             if(floatPart == 0){
-                let sum = getBase10(integerPart,base_from.value);
-                let finalResult = convertFromBase10(sum, base_to.value); 
-                output.value = finalResult;
+                if(base_to.value > 10){
+                    let sum = getBase10(integerPart,base_from.value);
+                    let finalResult = convertUpTo36(sum, base_to.value); 
+                    output.value = finalResult;
+
+                }
+                else{
+                    let sum = getBase10(integerPart,base_from.value);
+                    let finalResult = convertFromBase10(sum, base_to.value); 
+                    output.value = finalResult;
+                }
             }
             else{
                 floatPart = getBase10Fractional(floatPart,base_from.value);
@@ -75,10 +91,19 @@ convert.addEventListener("click",function() {
             }
         }
         else{
+
             if(floatPart == 0){
-                let finalResult = convertFromBase10(integerPart, base_to.value);
-                output.value = finalResult;
-                lettersInvolved = false;
+
+                if(base_to.value > 10){
+                    let finalResult = convertUpTo36(integerPart,base_to.value);
+                    output.value = finalResult;
+                    lettersInvolved = false;
+                }
+                else{
+                    let finalResult = convertFromBase10(integerPart, base_to.value);
+                    output.value = finalResult;
+                    lettersInvolved = false;
+                }
             }
             else{
                 floatPart = convertFromBase10Fractional(floatPart,base_to.value);
@@ -250,5 +275,28 @@ function convertFromBase10Fractional(number,base_to){
 
     result = "0." + result;
     result = parseFloat(result);
+    return result;
+};
+
+function convertUpTo36(number,base_to){
+
+    let baseToValue = parseInt(base_to);
+    let remainder = 0;
+    let result = "";
+    let quotient = number;
+
+    do {
+        remainder = quotient % baseToValue;
+        if(remainder > 9 ){
+            remainder = letterValues2[remainder].toString();
+            result += remainder;
+        }
+        else{
+            result += remainder.toString();
+        }
+        quotient = Math.floor(quotient / baseToValue);
+    } while (quotient != 0);
+
+    result = result.split("").reverse().join("");
     return result;
 };
