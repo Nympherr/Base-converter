@@ -7,6 +7,7 @@ let reset = document.querySelector("#reset");
 let base_from = document.querySelector("#base_from");
 let base_to = document.querySelector("#base_to");
 let lettersInvolved = false;
+let minusSign = false;
 
 const letterValues = {
     'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15, 'G': 16, 'H': 17,
@@ -37,6 +38,11 @@ reset.addEventListener("click", function(){
 convert.addEventListener("click",function() {
 
     //Checks if input has any symbols besides numbers
+
+    if(input.value[0] == "-"){
+        input.value = input.value.slice(1);
+        minusSign = true;
+    }
 
     let input_value;
     if(pattern.test(input.value)){
@@ -73,8 +79,14 @@ convert.addEventListener("click",function() {
 
             if(floatPart == 0){
                 let sum = getBase10(integerPart,base_from.value);
-                let finalResult = convertUpTo36(sum, base_to.value); 
-                output.value = finalResult;
+                let finalResult = convertUpTo36(sum, base_to.value);
+                if(minusSign == true){
+                    output.value = "-" + finalResult;
+                } 
+                else{
+                    output.value = finalResult;
+                }
+
             }
 
             // Input is a float number
@@ -89,7 +101,12 @@ convert.addEventListener("click",function() {
                     let sum = getBase10(integerPart,base_from.value);
                     let finalResult = convertUpTo36(sum, base_to.value); 
                     finalResult = finalResult + "." + floatPart;
-                    output.value = finalResult;
+                    if(minusSign == true){
+                        output.value = "-" + finalResult;
+                    }
+                    else{
+                        output.value = finalResult;
+                    }
                 }
 
                 // Converts to a 2-10 base where only numbers are allowed
@@ -100,7 +117,12 @@ convert.addEventListener("click",function() {
                     let sum = getBase10(integerPart,base_from.value);
                     let finalResult = convertFromBase10(sum, base_to.value);
                     finalResult = bigDecimal.add(finalResult, floatPart);
-                    output.value = finalResult;
+                    if(minusSign == true){
+                        output.value = -1 * finalResult;
+                    }
+                    else{
+                        output.value = finalResult;
+                    }
                 }
             }
         }
@@ -113,7 +135,12 @@ convert.addEventListener("click",function() {
 
             if(floatPart == 0){
                     let finalResult = convertUpTo36(integerPart,base_to.value);
-                    output.value = finalResult;
+                    if(minusSign == true){
+                        output.value = "-" + finalResult;
+                    }
+                    else{
+                        output.value = finalResult;
+                    }
                     lettersInvolved = false;
             }
 
@@ -127,7 +154,12 @@ convert.addEventListener("click",function() {
                     floatPart = convertUpTo36Fractional(floatPart,base_to.value);
                     let finalResult = convertUpTo36(integerPart,base_to.value);
                     finalResult = finalResult + "." + floatPart;
-                    output.value = finalResult;
+                    if(minusSign == true){
+                        output.value = "-" + finalResult;
+                    }
+                    else{
+                        output.value = finalResult;
+                    }
                     lettersInvolved = false;
 
                 }
@@ -138,7 +170,12 @@ convert.addEventListener("click",function() {
                     floatPart = convertFromBase10Fractional(floatPart,base_to.value);
                     let finalResult = convertFromBase10(integerPart, base_to.value);
                     finalResult = bigDecimal.add(finalResult, floatPart);
-                    output.value = finalResult;
+                    if(minusSign == true){
+                        output.value = -1 * finalResult;
+                    }
+                    else{
+                        output.value = finalResult;
+                    }
                     lettersInvolved = false;
                 }
             }
@@ -149,6 +186,10 @@ convert.addEventListener("click",function() {
 
     else{
         output.value = "Error!"
+    }
+    if(minusSign == true){
+        input.value = "-" + input.value;
+        minusSign = false;
     }
 });
 
